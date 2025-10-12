@@ -1,6 +1,8 @@
 package services
 
 import (
+	"context"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,4 +21,24 @@ var client *mongo.Client
 func New(mongo *mongo.Client) Todo {
 	client = mongo
 	return Todo{}
+}
+
+func returnCollectionPointer(collection string) *mongo.Collection {
+	return client.Database("todos_db").Collection(collection)
+}
+
+func (t *Todo) InsertTodo(entry Todo) error {
+	collection := returnCollectionPointer("todos")
+	_, err := collection.InsertOne(context.TODO(), Todo{
+		Task:      entry.Task,
+		Completed: entry.Completed,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
+
+	if err != nil {
+		log.Println("Error: ", err)
+		return err
+	}
+	return nil
 }
