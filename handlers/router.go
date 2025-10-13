@@ -25,7 +25,7 @@ func CreateRouter() *chi.Mux {
 	router.Route("/api", func(router chi.Router) {
 		router.Route("/v1", func(router chi.Router) {
 			router.Get("/healthcheck", HealthCheck)
-			router.Post("/todos/create", CreateTodos)
+			router.Post("/todos/create", createTodo)
 		})
 	})
 
