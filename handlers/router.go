@@ -25,7 +25,11 @@ func CreateRouter() *chi.Mux {
 	router.Route("/api", func(router chi.Router) {
 		router.Route("/v1", func(router chi.Router) {
 			router.Get("/healthcheck", HealthCheck)
+			router.Get("/todos", getTodos)
+			router.Get("/todos/{id}", getTodoByID)
 			router.Post("/todos/create", createTodo)
+			router.Put("/todos/update/{id}", updateTodo)
+			router.Delete("/todos/delete/{id}", deleteTodo)
 		})
 	})
 
