@@ -1,10 +1,8 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/go-mongo-todos/db"
 	"github.com/go-mongo-todos/handlers"
@@ -16,24 +14,21 @@ type Application struct {
 }
 
 func main() {
+	// 1. Connect to the database
 	mongoClient, err := db.ConnectToMongo()
-
 	if err != nil {
-		log.Panic()
-		return
+		log.Fatal("Could not connect to the database")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	// 2. Initialize the service with the database client
+	todoService := services.New(mongoClient)
 
-	defer func() {
-		if err = mongoClient.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
+	// 3. Initialize the handler with the service
+	todoHandler := handlers.NewTodoHandler(todoService)
 
-	services.New(mongoClient)
+	// 4. Create the router and pass the handler to it
+	router := handlers.CreateRouter(todoHandler)
 
-	log.Println("Services run in port", 8080)
-	log.Fatal(http.ListenAndServe(":8080", handlers.CreateRouter()))
+	log.Println("Server is running on port :8080")
+	http.ListenAndServe(":8080", router)
 }
