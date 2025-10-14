@@ -97,10 +97,10 @@ func (t *Todo) UpdatedTodo(id string, entry Todo) (*mongo.UpdateResult, error) {
 	}
 
 	update := bson.D{
-		{"$set", bson.D{
-			{"_task", entry.Task},
-			{"_completed", entry.Completed},
-			{"_update_at", time.Now()},
+		{Key: "$set", Value: bson.D{
+			{Key: "_task", Value: entry.Task},
+			{Key: "_completed", Value: entry.Completed},
+			{Key: "_update_at", Value: time.Now()},
 		}},
 	}
 
