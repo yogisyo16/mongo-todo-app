@@ -36,10 +36,10 @@ func CreateRouter(todoHandler *TodoHandler, userHandler *UserHandler) *chi.Mux {
 			router.Put("/todos/update/{id}", todoHandler.updateTodo)
 			router.Delete("/todos/delete/{id}", todoHandler.deleteTodo)
 		})
-	})
 
-	router.Route("/v2", func(router chi.Router) {
-
+		router.Route("/v2", func(router chi.Router) {
+			router.Get("/healthiecheck", HealthCheck)
+		})
 	})
 
 	return router
