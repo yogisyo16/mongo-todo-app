@@ -1,0 +1,19 @@
+- api
+  - main.go
+- db
+  - db.go
+- handlers
+  - router.go
+  - todoHandler.go
+  - userHandler.go
+- services
+  - main.go
+  - todoService.go
+  - userServices.go
+- .env
+- .gitignore
+- docker-compose.yml
+- go.mod
+- go.sum
+- Makefile
+- mongoTodosYogis
