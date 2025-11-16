@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time" // Import time for the context timeout
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -24,14 +25,25 @@ func ConnectToMongo() (*mongo.Client, error) {
 		Password: password,
 	})
 
+	// Set up a context with a timeout for the connection attempt
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	// Connect to MongoDB
-	client, err := mongo.Connect(context.Background(), clientOptions)
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
 
-	log.Println("We Connect to mongo...")
+	// Ping the database to verify the connection
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal("Could not ping database: ", err)
+		return nil, err
+	}
+
+	log.Println("Successfully connected and pinged MongoDB!")
 
 	return client, nil
 }

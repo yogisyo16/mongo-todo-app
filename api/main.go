@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-mongo-todos/db"
 	"github.com/go-mongo-todos/handlers"
@@ -31,6 +33,12 @@ func main() {
 	// 4. Create the router and pass both handlers to it
 	router := handlers.CreateRouter(todoHandler, userHandler)
 
-	log.Println("Server is running on port :8080")
-	http.ListenAndServe(":8080", router)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Default to 8080 if not set
+	}
+
+	serverAddr := fmt.Sprintf(":%s", port)
+	log.Printf("Server is running on port %s\n", serverAddr)
+	http.ListenAndServe(serverAddr, router)
 }
