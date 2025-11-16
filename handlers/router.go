@@ -15,7 +15,7 @@ func CreateRouter(todoHandler *TodoHandler, userHandler *UserHandler) *chi.Mux {
 
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTION"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CRSF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
@@ -38,7 +38,7 @@ func CreateRouter(todoHandler *TodoHandler, userHandler *UserHandler) *chi.Mux {
 		})
 
 		router.Route("/v2", func(router chi.Router) {
-			router.Get("/healthiecheck", HealthCheck)
+			router.Get("/healthcheck", HealthCheck)
 		})
 	})
 
