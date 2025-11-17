@@ -12,7 +12,8 @@ import (
 
 type Todo struct {
 	ID        string    `json:"id,omitempty" bson:"_id,omitempty"`
-	Task      string    `json:"task,omitempty" bson:"_task,omitempty"`
+	UserID    string    `json:"user_id" bson:"_user_id"`
+	Task      string    `json:"task" bson:"_task"`
 	DateDue   time.Time `json:"date_due,omitempty" bson:"_date_due,omitempty"`
 	Completed bool      `json:"completed" bson:"_completed"`
 	CreatedAt time.Time `json:"created_at,omitempty" bson:"_created_at,omitempty"`
