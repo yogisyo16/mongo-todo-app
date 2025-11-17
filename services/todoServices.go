@@ -13,6 +13,7 @@ import (
 type Todo struct {
 	ID        string    `json:"id,omitempty" bson:"_id,omitempty"`
 	Task      string    `json:"task,omitempty" bson:"_task,omitempty"`
+	DateDue   time.Time `json:"date_due,omitempty" bson:"_date_due,omitempty"`
 	Completed bool      `json:"completed" bson:"_completed"`
 	CreatedAt time.Time `json:"created_at,omitempty" bson:"_created_at,omitempty"`
 	UpdatedAt time.Time `json:"update_at,omitempty" bson:"_update_at,omitempty"`
@@ -74,6 +75,7 @@ func (t *Todo) InsertTodo(entry Todo) error {
 	collection := returnTodosCollection("todos")
 	_, err := collection.InsertOne(context.TODO(), Todo{
 		Task:      entry.Task,
+		DateDue:   entry.DateDue,
 		Completed: entry.Completed,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -99,6 +101,7 @@ func (t *Todo) UpdatedTodo(id string, entry Todo) (*mongo.UpdateResult, error) {
 	update := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "_task", Value: entry.Task},
+			{Key: "_date_due", Value: entry.DateDue},
 			{Key: "_completed", Value: entry.Completed},
 			{Key: "_update_at", Value: time.Now()},
 		}},
