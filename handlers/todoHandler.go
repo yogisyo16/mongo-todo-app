@@ -52,12 +52,32 @@ func (h *TodoHandler) getTodos(w http.ResponseWriter, r *http.Request) {
 	todos, err := h.Service.GetAllTodos()
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(500)
 		return
+	}
+
+	if todos == nil {
+		todos = []services.Todo{}
+	}
+
+	// Response structure wrapper
+	response := struct {
+		Code int `json:"code"`
+		Data struct {
+			Items []services.Todo `json:"items"`
+		} `json:"data"`
+	}{
+		Code: 200,
+		Data: struct {
+			Items []services.Todo `json:"items"`
+		}{
+			Items: todos,
+		},
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
-	json.NewEncoder(w).Encode(todos)
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *TodoHandler) getTodoByID(w http.ResponseWriter, r *http.Request) {
