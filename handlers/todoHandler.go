@@ -14,24 +14,28 @@ type TodoHandler struct {
 	Service services.Todo
 }
 
+// Create Todo request structure
 type CreateTodoRequest struct {
-	Task      string `json:"task"` // Remove underscore
+	Task      string `json:"task"`
 	DateDue   string `json:"date_due"`
-	Completed bool   `json:"completed"` // Remove underscore
+	Completed bool   `json:"completed"`
 }
 
+// Update Todo request structure
 type UpdateTodoRequest struct {
-	Task      string `json:"task"` // Remove underscore
+	Task      string `json:"task"`
 	DateDue   string `json:"date_due"`
-	Completed bool   `json:"completed"` // Remove underscore
+	Completed bool   `json:"completed"`
 }
 
+// Generic response structure
 func NewTodoHandler(service services.Todo) *TodoHandler {
 	return &TodoHandler{
 		Service: service,
 	}
 }
 
+// Health Check endpoint
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	res := Response{
 		Msg:  "Health Check",
@@ -48,6 +52,7 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonStr)
 }
 
+// Logic to get all todos
 func (h *TodoHandler) getTodos(w http.ResponseWriter, r *http.Request) {
 	todos, err := h.Service.GetAllTodos()
 	if err != nil {
@@ -80,6 +85,7 @@ func (h *TodoHandler) getTodos(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// Logic to get todo by id
 func (h *TodoHandler) getTodoByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
@@ -94,9 +100,11 @@ func (h *TodoHandler) getTodoByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(todo)
 }
 
+// Create todo
 func (h *TodoHandler) createTodo(w http.ResponseWriter, r *http.Request) {
 	var req CreateTodoRequest
 
+	// Decode the request body
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		log.Println(err)
@@ -125,10 +133,11 @@ func (h *TodoHandler) createTodo(w http.ResponseWriter, r *http.Request) {
 	// Create the Todo with parsed time.Time
 	newTodo := services.Todo{
 		Task:      req.Task,
-		DateDue:   dateDue, // Now it's time.Time
+		DateDue:   dateDue,
 		Completed: req.Completed,
 	}
 
+	// Insert the new todo into the database
 	err = h.Service.InsertTodo(newTodo)
 	if err != nil {
 		log.Println(err)
@@ -141,6 +150,7 @@ func (h *TodoHandler) createTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Respond with success
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(Response{
@@ -149,6 +159,7 @@ func (h *TodoHandler) createTodo(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Logic to update todo by id
 func (h *TodoHandler) updateTodo(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	var req UpdateTodoRequest
@@ -204,6 +215,7 @@ func (h *TodoHandler) updateTodo(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Delete Todo it can be used only by id (On going to make delete all todos)
 func (h *TodoHandler) deleteTodo(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
